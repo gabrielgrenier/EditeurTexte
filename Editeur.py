@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+
+from Fichier import Fichier
+from Fichier import FichierBinaire
+from Fichier import FichierTexte
+
 class Editeur():
     """
     La classe Éditeur représente une instance de ed2017 lui-même. Il permet
@@ -13,27 +19,71 @@ class Editeur():
         """
         Initialise l’éditeur avec un tampon texte vide qui sera bien entendu le tampon courant.
         """
-        self._tampons = []
-        self._tampon_courant = Tampon()
+        self._tampons = [] #Liste des tempons ouvert
+        self._tampon_courant = Tampon() #Le tempon du ficher ouvert
 
     def invite(self):
         """
         Affiche l’invite de commande ( :) et saisi une commande de l’utilisateur.
-        Retour : (liste de str) : Une liste de mots entrés par l’utilisateur 
+        Retour (liste de str) : Une liste de mots entrés par l’utilisateur 
         """
-        pass
+        choix = input(">")
+        return choix
 
-    def exécute_commande(self):
+    def exécute_commande(self, une_commande, un_paramètre):
         """
         Valide et exécute une commande de l’utilisateur.
         
-        Attributs :
+        Paramètres :
             - commande (str) : la commande entrée par l’utilisateur
             - paramètre (str) : le paramètre entré par l’utilisateur ou None s’il n’y en a pas
         
         Retour (bool) Faux si et seulement si c’était la dernière commande et que le programme doit se terminer.
         """
-        pass
+        liste_mot = une_commande.split()
+        paramètre = liste_commande[-1]
+        commande = liste_mot[0]
+
+        if commande == "a":#À tester
+            if paramètre[0] == "n" and paramètre[1::].isdigit() == True:
+                compteur = 0
+                nombre_lignes = int(paramètre[1::])
+
+                while compteur < nombre_lignes:
+                    print(self._tampon_courant._contenu[compteur])
+                    compteur = compteur + 1
+
+            else:
+                for line in len(self._tampon_courant._contenu):
+                    print(self._tampon_courant._contenu[line])
+
+        if commande == "l":#à travailler
+            nouveau_tempon = Tempon(paramètre)
+            while True:
+                try:
+                    self._tampons.append(nouveau_tempon)
+
+                except:
+                    print("Veuillez entrer un chemin valide.")
+                    chemin = input(">")
+                    self._tampons.append(chemin)
+
+        if commande == "b":#Binaire pas encore fait
+            pass
+
+        if commande == "e":
+            self._tampon_courant.sauvegarder(paramètre)
+
+        if commande == "i":#pas encore fait
+            pass
+
+        if commande == "s":#pas encore fait
+            pass
+
+        if commande == "t":#À tester
+            for i in len(self._tampons):
+                print(i, self._tampons[i])
+
 
 class Tampon():
     """
@@ -47,6 +97,7 @@ class Tampon():
                    (le tampon a été modifié depuis ladernière lecture ou sauvegarde).
         _fichier (obj Fichier) : Le fichier associé au tampon
     """
+
     def __init__(self, un_nom_fichier):
         """
         Initialise un Tampon. Si le nom de fichier est None, le
@@ -55,7 +106,9 @@ class Tampon():
         Paramètres :
             - un_nom_fichier (str) : chemin relatif du fichier associé au Tampon. None s’il s’agit d’un Tampon vide.
         """
-        pass
+        self._contenu = []
+        self._modifié = False
+        self._fichier = Fichier(un_nom_fichier)
 
     def __str__(self):
         """
@@ -64,14 +117,18 @@ class Tampon():
 
         Retour : Le contenu sous la forme d’une chaîne de caractères.
         """
-        pass
+        contenu = ""
+        for i in len(self._contenu):
+            contenu.append(self._contenu[i])
+
+        return contenu
 
     def get_fichier(self):
         """
         Accesseur du fichier associé au tampon.
         Retour : Objet fichier
         """
-        pass
+        return self._fichier
 
     def get_ligne(self, no_ligne):
         """
@@ -87,16 +144,20 @@ class Tampon():
         """
         pass
 
-    def ouvir(self, un_nom_fichier):
+    def ouvrir(self, un_nom_fichier):
         """
         Charge le contenu d’un fichier dans le tampon.
         
         Paramètre :
             - un_nom_ficher (string) :  le chemin relatif du fichier à lire.
         """
-        pass
+        self._fichier = Fichier(un_nom_fichier)
+        contenu = self._fichier.get_contenu()
 
-    def sauvegardé(self):
+        for line in len(contenu):
+            self._contenu.append(contenu[line])
+
+    def sauvegarder(self, un_nom_fichier):
         """
         place le contenu du tampon dans un fichier. 
         Le fichier associé au tampon est utilisé s’il existe et il est créé sinon.
@@ -104,7 +165,10 @@ class Tampon():
         Paramètre :
             un_nom_fichier (str) : le chemin relatif du fichier dans lequel sauvegarder le contenu du tampon.
         """
-        pass
+        f = open(un_nom_fichier, "w")
+
+        for line in len(self._contenu):
+            f.writeline(self._contenu[line])
 
     def inseré(self, un_ajout, position):
         """
@@ -141,4 +205,4 @@ class Tampon():
         du contenu du fichier associé (le tampon a été modifié depuis la
         dernière lecture ou sauvegarde).
         """
-        pass
+        return self._modifié
