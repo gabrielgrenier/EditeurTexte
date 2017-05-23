@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class Fichier:
     """
     Un fichier
@@ -9,12 +10,11 @@ class Fichier:
     """
 
     def __init__(self, un_nom):
-
         """
         Initialise un fichier
         """
         self._nom = un_nom
-        pass
+
 
     def get_nom(self):
         """
@@ -24,8 +24,7 @@ class Fichier:
         pas encore écrit sur disque.
 
         """
-        pass
-
+        return self._nom
 
     def set_nom(self, un_nom):
         """
@@ -43,8 +42,8 @@ class Fichier:
             - Message : « [un_nom] existe déjà. »
 
         """
-        
-        pass
+        self._nom = un_nom#pas fini
+
 
     def get_contenu(self):
         """
@@ -55,7 +54,6 @@ class Fichier:
 
 
         """
-
         pass
 
     def set_contenu(self, un_contenu):
@@ -105,16 +103,14 @@ class Fichier:
         pass
 
 
-
 class FichierTexte(Fichier):
-
     """
     Un fichier texte.
 
 
     - Hérite de : Fichier
     """
-    
+
     def lire(self):
         """
         Lit et retourne le contenu d’un fichier texte.
@@ -136,15 +132,15 @@ class FichierTexte(Fichier):
 
         pass
 
-class FichierBinaire(Fichier):
 
+class FichierBinaire(Fichier):
     """
     Un fichier binaire.
 
 
     - Hérite de : Fichier
     """
-    
+
     def lire(self):
         """
         Lit et retourne le contenu d’un fichier binaire.
