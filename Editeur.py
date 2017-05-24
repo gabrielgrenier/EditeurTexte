@@ -41,38 +41,54 @@ class Editeur():
         Retour (bool) Faux si et seulement si c’était la dernière commande et que le programme doit se terminer.
         """
         liste_mot = une_commande.split()
-        paramètre = liste_commande[-1]
         commande = liste_mot[0]
 
-        if commande == "a":#À tester
+        if commande == "a":
+            paramètre = liste_mot[-1]
+
             if paramètre[0] == "n" and paramètre[1::].isdigit() == True:
                 compteur = 0
-                nombre_lignes = int(paramètre[1::])
+                nombre_ligne = int(paramètre[1::])
 
-                while compteur < nombre_lignes:
-                    print(self._tampon_courant._contenu[compteur])
-                    compteur = compteur + 1
+                print("la commande :", liste_mot)  # Débug
+                print("le paramètre :", paramètre)  # Débug
+                print("le nombre de ligne à afficher:", nombre_ligne)  # Débug
 
-            else:
-                for line in len(self._tampon_courant._contenu):
-                    print(self._tampon_courant._contenu[line])
+                if nombre_ligne < len(self._tampon_courant._contenu):
+                    while compteur < nombre_ligne:
+                        print(self._tampon_courant._contenu[compteur])
+                        compteur = compteur + 1
 
-        if commande == "l":#à travailler
-            nouveau_tempon = Tempon(paramètre)
-            while True:
-                try:
-                    self._tampons.append(nouveau_tempon)
+                else:
+                    for i in range(len(self._tampon_courant._contenu)):
+                        print(self._tampon_courant._contenu[i])
 
-                except:
-                    print("Veuillez entrer un chemin valide.")
-                    chemin = input(">")
-                    self._tampons.append(chemin)
+            if paramètre == "a":
+                for i in range(len(self._tampon_courant._contenu)):
+                    print(self._tampon_courant._contenu[i])
+
+
+        if commande == "l":
+            chemin = liste_mot[-1]
+            nouveau_tempon = Tampon(chemin)
+
+            try:
+                self._tampons.append(nouveau_tempon)
+
+            except:
+                print("Le chemin que vous avez entré n'est pas valide.")
+
 
         if commande == "b":#Binaire pas encore fait
             pass
 
         if commande == "e":
-            self._tampon_courant.sauvegarder(paramètre)
+            chemin = liste_mot[-1]
+            try:
+                self._tampon_courant.sauvegarder(chemin)
+
+            except:
+                print("le chemin n'est pas valide.")
 
         if commande == "i":#pas encore fait
             pass
@@ -80,8 +96,8 @@ class Editeur():
         if commande == "s":#pas encore fait
             pass
 
-        if commande == "t":#À tester
-            for i in len(self._tampons):
+        if commande == "t":
+            for i in range(len(self._tampons)):
                 print(i, self._tampons[i])
 
 
@@ -118,8 +134,8 @@ class Tampon():
         Retour : Le contenu sous la forme d’une chaîne de caractères.
         """
         contenu = ""
-        for i in len(self._contenu):
-            contenu.append(self._contenu[i])
+        for i in range(len(self._contenu)):
+            contenu = contenu + self._contenu[i]
 
         return contenu
 
@@ -151,11 +167,10 @@ class Tampon():
         Paramètre :
             - un_nom_ficher (string) :  le chemin relatif du fichier à lire.
         """
-        self._fichier = Fichier(un_nom_fichier)
-        contenu = self._fichier.get_contenu()
+        f = open(un_nom_fichier, "r")
 
-        for line in len(contenu):
-            self._contenu.append(contenu[line])
+        for line in f.readline():
+            self._contenu.append(line)
 
     def sauvegarder(self, un_nom_fichier):
         """
@@ -166,9 +181,9 @@ class Tampon():
             un_nom_fichier (str) : le chemin relatif du fichier dans lequel sauvegarder le contenu du tampon.
         """
         f = open(un_nom_fichier, "w")
+        for i in range(len(self._contenu)):
+            f.writelines(self._contenu[i])
 
-        for line in len(self._contenu):
-            f.writeline(self._contenu[line])
 
     def inseré(self, un_ajout, position):
         """
