@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+#Auteur Gabriel Braun-Grenier
+#Date : 2017-05-20
+#Classe Éditeur, Tampon, TamponTexte et TamponBinaire
 
 from Fichier import Fichier
 from Fichier import FichierBinaire
@@ -73,12 +76,22 @@ class Editeur():
 
 
         if commande == "l" and liste_mots[-1] != "l": #si la commande est l et que l'utilisateur entre un chemin
-            #faire une boucle pour ouvrir un objet tampon dans la liste au lieu d'en créer un nouveau
+            tampon_existant = False
             chemin = liste_mots[-1]
-            nouveau_tampon = Tampon(chemin)
-            self._tampon_courant = nouveau_tampon
-            self._tampons.append(self._tampon_courant._fichier.get_nom())
-            self._tampon_courant.ouvrir(chemin)
+
+            for i in range(len(self._tampons)):
+                if chemin == self._tampons[i]._fichier.get_nom():
+                    self._tampon_courant = self._tampons[i]
+                    tampon_existant = True
+                    break
+
+            if tampon_existant == False:
+                nouveau_tampon = Tampon(chemin)
+                self._tampon_courant = nouveau_tampon
+                self._tampons.append(self._tampon_courant)
+                self._tampon_courant.ouvrir(chemin)
+
+
 
         if commande == "b":#Binaire pas encore fait
             pass
@@ -93,24 +106,33 @@ class Editeur():
 
         if commande == "i":#pas encore fait
             print("À quelle position voulez-vous faire votre ajout?")
-            position = input(">")
+            position = input(":")
 
             if position.isdigit() == False:
                 print("Votre position n'est pas valide.")
 
             else:
                 position = int(position)
-                print("Veuillez entrer la position ou vous voulez ajout votre texte")
-                ajout = input(">")
+                print("Veuillez entrer l'ajout")
+                ajout = input(":")
 
                 self._tampon_courant.inserer(ajout, position)
 
-        if commande == "s":#pas encore fait
-            pass
+        if commande == "s":
+            paramètre = liste_mots[-1]
+
+            if paramètre[1::].isdigit() == True:
+                no_ligne = paramètre[1::]
+                no_ligne = int(no_ligne)
+                self._tampon_courant.supprimer(no_ligne)
+
+
+            else:
+                print("Votre choix n'est pas valide.")
 
         if commande == "t" and liste_mots[-1] == "t":
             for i in range(len(self._tampons)):
-                print(i, self._tampons[i])
+                print(i, self._tampons[i]._fichier.get_nom())
 
 
 class Tampon():
@@ -245,6 +267,21 @@ class Tampon():
         dernière lecture ou sauvegarde).
         """
         return self._modifié
+
+
+class TamponTexte(Tampon):
+    def __str__(self):
+        pass
+
+    def ouvrir(self, un_nom_fichier):
+        pass
+
+    def get_ligne(self, no_ligne):
+        pass
+
+
+
+
 
 éditeur = Editeur()
 while True:
