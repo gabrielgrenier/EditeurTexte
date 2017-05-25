@@ -20,7 +20,7 @@ class Editeur():
         Initialise l’éditeur avec un tampon texte vide qui sera bien entendu le tampon courant.
         """
         self._tampons = [] #Liste des tempons ouvert
-        self._tampon_courant = Tampon() #Le tempon du ficher ouvert
+        self._tampon_courant = Tampon("vide.txt") #Le tempon du ficher ouvert
 
     def invite(self):
         """
@@ -30,7 +30,7 @@ class Editeur():
         choix = input(">")
         return choix
 
-    def exécute_commande(self, une_commande, un_paramètre):
+    def exécute_commande(self, une_commande):
         """
         Valide et exécute une commande de l’utilisateur.
         
@@ -40,50 +40,54 @@ class Editeur():
         
         Retour (bool) Faux si et seulement si c’était la dernière commande et que le programme doit se terminer.
         """
-        liste_mot = une_commande.split()
-        commande = liste_mot[0]
+        liste_mots = une_commande.split()
+        commande = liste_mots[0]
 
-        if commande == "a":
-            paramètre = liste_mot[-1]
+        if commande == "a": #commande pour afficher
+            paramètre = liste_mots[-1]
 
-            if paramètre[0] == "n" and paramètre[1::].isdigit() == True:
+            if paramètre[0] == "n" and paramètre[1::].isdigit() == True: #si l'utilisateur entre en paramètre le nombre de ligne
                 compteur = 0
                 nombre_ligne = int(paramètre[1::])
 
-                print("la commande :", liste_mot)  # Débug
+                print("la commande :", liste_mots)  # Débug
                 print("le paramètre :", paramètre)  # Débug
                 print("le nombre de ligne à afficher:", nombre_ligne)  # Débug
+                print("Longeur de tempon courant:", len(self._tampon_courant._contenu)) #débug
 
-                if nombre_ligne < len(self._tampon_courant._contenu):
+                if nombre_ligne < len(self._tampon_courant._contenu): #si il ne veut pas afficher toutes les lignes
                     while compteur < nombre_ligne:
                         print(self._tampon_courant._contenu[compteur])
                         compteur = compteur + 1
 
-                else:
+                else: #si il veut afficher toute les lignes
                     for i in range(len(self._tampon_courant._contenu)):
                         print(self._tampon_courant._contenu[i])
 
-            if paramètre == "a":
+            if paramètre == "a":# si l'utilisateur n'a pas entré de paramètre le programme affiche tout
                 for i in range(len(self._tampon_courant._contenu)):
                     print(self._tampon_courant._contenu[i])
 
+            else: #si ce qu'il entre n'est valide
+                print("ce n'est pas un choix valide")
 
-        if commande == "l":
-            chemin = liste_mot[-1]
-            nouveau_tempon = Tampon(chemin)
 
-            try:
-                self._tampons.append(nouveau_tempon)
+        if commande == "l" and liste_mots[-1] != "l": #si la commande est l et que l'utilisateur entre un chemin
+            chemin = liste_mots[-1]
+            f = open(chemin, "r")
+            print("Ouverture de", chemin)
 
-            except:
-                print("Le chemin que vous avez entré n'est pas valide.")
+            for line in f.readlines(): #Boucle qui rajoute toute les lignes du fichier dans le contenu du tampon courant
+                self._tampon_courant._contenu.append(line)
 
+            print("la longeur du tempon courant :", len(self._tampon_courant._contenu))#débug
+            print(self._tampon_courant._contenu)#débug
 
         if commande == "b":#Binaire pas encore fait
             pass
 
         if commande == "e":
-            chemin = liste_mot[-1]
+            chemin = liste_mots[-1]
             try:
                 self._tampon_courant.sauvegarder(chemin)
 
@@ -221,3 +225,8 @@ class Tampon():
         dernière lecture ou sauvegarde).
         """
         return self._modifié
+
+éditeur = Editeur()
+while True:
+    choix = éditeur.invite()
+    éditeur.exécute_commande(choix)
