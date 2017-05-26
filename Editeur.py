@@ -52,6 +52,7 @@ class Editeur():
             if paramètre[0] == "n" and paramètre[1::].isdigit() == True: #si l'utilisateur entre en paramètre le nombre de ligne
                 compteur = 0
                 nombre_ligne = int(paramètre[1::])
+                contenu_str = ""
 
                 print("la commande :", liste_mots)  # Débug
                 print("le paramètre :", paramètre)  # Débug
@@ -60,16 +61,16 @@ class Editeur():
 
                 if nombre_ligne < len(self._tampon_courant._contenu): #si il ne veut pas afficher toutes les lignes
                     while compteur < nombre_ligne:
-                        print(compteur, self._tampon_courant._contenu[compteur])
+                        contenu_str = contenu_str + str(compteur) + " " + self._tampon_courant._contenu[compteur]
                         compteur = compteur + 1
 
+                    print(contenu_str)
+
                 else: #si il veut afficher toute les lignes
-                    for i in range(len(self._tampon_courant._contenu)):
-                        print(i, self._tampon_courant._contenu[i])
+                    print(self._tampon_courant)
 
             elif paramètre == "a":# si l'utilisateur n'a pas entré de paramètre le programme affiche tout
-                for i in range(len(self._tampon_courant._contenu)):
-                    print(i, self._tampon_courant._contenu[i])
+                print(self._tampon_courant)
 
             else: #si ce qu'il entre n'est valide
                 print("ce n'est pas un choix valide")
@@ -169,7 +170,7 @@ class Tampon():
         """
         contenu = ""
         for i in range(len(self._contenu)):
-            contenu = contenu + self._contenu[i]
+            contenu = contenu + str(i) + " " + self._contenu[i]
 
         return contenu
 
@@ -240,11 +241,15 @@ class Tampon():
             Message : «la position dépasse la taille du tampon»
 
         """
-        première_moitié = self._contenu[0:position]
-        deuxième_moitié = self._contenu[position::]
-        première_moitié.append(un_ajout + "\n")
+        if position < len(self._contenu):
+            première_moitié = self._contenu[0:position]
+            deuxième_moitié = self._contenu[position::]
+            première_moitié.append(un_ajout + "\n")
 
-        self._contenu = première_moitié + deuxième_moitié
+            self._contenu = première_moitié + deuxième_moitié
+
+        else:
+            self._contenu.append("\n" + str(len(self._contenu)) + " " +un_ajout + "\n")
 
     def supprimer(self, position):
         """
