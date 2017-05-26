@@ -97,27 +97,28 @@ class Editeur():
         if commande == "b":#Binaire pas encore fait
             pass
 
-        if commande == "e":
+        if commande == "e": #rajouter des conditions comme quand il n'y a pas de chemin
             chemin = liste_mots[-1]
-            try:
-                self._tampon_courant.sauvegarder(chemin)
+            self._tampon_courant.sauvegarder(chemin)
 
-            except:
-                print("le chemin n'est pas valide.")
-
-        if commande == "i":#pas encore fait
-            print("À quelle position voulez-vous faire votre ajout?")
-            position = input(":")
-
-            if position.isdigit() == False:
-                print("Votre position n'est pas valide.")
+        if commande == "i": #à refaire Selon le document
+            if len(self._tampons) == 0: #refaire
+                print("Vous devez charger un fichier dans le programme avant de pouvoir le modifier.")
 
             else:
-                position = int(position)
-                print("Veuillez entrer l'ajout")
-                ajout = input(":")
+                print("À quelle position voulez-vous faire votre ajout?")
+                position = input(":")
 
-                self._tampon_courant.inserer(ajout, position)
+                if position.isdigit() == False:
+                    print("Veuillez entrer un paramètre numérique.")
+
+
+                else:
+                    position = int(position)
+                    print("Veuillez entrer l'ajout")
+                    ajout = input(":")
+
+                    self._tampon_courant.inserer(ajout, position)
 
         if commande == "s":
             paramètre = liste_mots[-1]
@@ -132,9 +133,26 @@ class Editeur():
                 print("Votre choix n'est pas valide.")
 
         if commande == "t" and liste_mots[-1] == "t":
-            for i in range(len(self._tampons)):
-                print(i, self._tampons[i]._fichier.get_nom())
+            if len(self._tampons) > 0:
+                for i in range(len(self._tampons)):
+                    print(i, self._tampons[i]._fichier.get_nom())
 
+            else:
+                print("Vous n'avez pas chargé de fichier dans la mémoire tampon.")
+
+        if commande == "z":
+            paramètre = int(liste_mots[-1])
+            print(self._tampon_courant.get_ligne(paramètre))
+
+        if commande == "q":
+            if self._tampon_courant.est_modifié() == True:
+                print("Vous devez sauvegarder votre fichier avant de quitter.")
+
+            else:
+                quit()
+
+        if commande == "Q":
+            quit()
 
 class Tampon():
     """
@@ -168,11 +186,7 @@ class Tampon():
 
         Retour : Le contenu sous la forme d’une chaîne de caractères.
         """
-        contenu = ""
-        for i in range(len(self._contenu)):
-            contenu = contenu + str(i) + " " + self._contenu[i]
-
-        return contenu
+        return TamponTexte.__str__(self) #je peux pas retourner seulement TamponTexte sans le __str__(self) je comprend pas pourquoi
 
     def get_fichier(self):
         """
@@ -193,7 +207,7 @@ class Tampon():
             Le numéro de ligne correspond à un élément du tampon
             Message : «no_ligne ne représente pas un élément du contenu»
         """
-        return self._contenu[no_ligne]
+        return TamponTexte.get_ligne(self, no_ligne) #je comprend pas pourquoi il faut mettre le self
 
     def ouvrir(self, un_nom_fichier):
         """
@@ -202,18 +216,8 @@ class Tampon():
         Paramètre :
             - un_nom_ficher (string) :  le chemin relatif du fichier à lire.
         """
-        try:
-            f = open(un_nom_fichier, "r")
-            print("Ouverture de", un_nom_fichier)
+        TamponTexte.ouvrir(self, un_nom_fichier) #Je suis obligé de mettre le self, je sais pas pourquoi
 
-            for line in f.readlines():  # Boucle qui rajoute toute les lignes du fichier dans le contenu du tampon courant
-                self._contenu.append(line)
-
-            print("la longeur du tempon courant :", len(self._contenu))  # débug
-            print(self._contenu)  #débug
-
-        except FileNotFoundError:
-            print("Le fichier ou le chemin est invalide.")
 
     def sauvegarder(self, un_nom_fichier):
         """
@@ -223,9 +227,13 @@ class Tampon():
         Paramètre :
             un_nom_fichier (str) : le chemin relatif du fichier dans lequel sauvegarder le contenu du tampon.
         """
+        self._modifié = False
         f = open(un_nom_fichier, "w")
+
         for i in range(len(self._contenu)):
             f.writelines(self._contenu[i])
+
+        f.close()
 
 
     def inserer(self, un_ajout, position):
@@ -241,6 +249,8 @@ class Tampon():
             Message : «la position dépasse la taille du tampon»
 
         """
+        self._modifié = True
+
         if position < len(self._contenu):
             première_moitié = self._contenu[0:position]
             deuxième_moitié = self._contenu[position::]
@@ -262,6 +272,7 @@ class Tampon():
          La position correspond à un élément existant
          Message : «position ne représente pas un élément du contenu»
         """
+        self._modifié = True
         self._contenu.pop(position) #Faire le try / except
 
     def est_modifié(self):
@@ -276,13 +287,49 @@ class Tampon():
 
 class TamponTexte(Tampon):
     def __str__(self):
-        pass
+        """
+        Retourne le contenu complet du tampon
+        """
+        contenu = ""
+        for i in range(len(self._contenu)):
+            contenu = contenu + str(i) + " " + self._contenu[i]
+
+        return contenu
 
     def ouvrir(self, un_nom_fichier):
-        pass
+        """
+        Charge le contenu d'un fichier dans le tempon.
+        
+        Paramètre:
+            - un_nom_fichier (str) : Le nom du fichier/le chemin du fichier à ouvrir
+        """
+        try:
+            f = open(un_nom_fichier, "r")
+            print("Ouverture de", un_nom_fichier)
+
+            for line in f.readlines():  # Boucle qui rajoute toute les lignes du fichier dans le contenu du tampon courant
+                self._contenu.append(line)
+
+            print("la longeur du tempon courant :", len(self._contenu))  # débug
+            print(self._contenu)  #débug
+
+            return self._contenu
+
+        except FileNotFoundError:
+            print("Le fichier ou le chemin est invalide.")
 
     def get_ligne(self, no_ligne):
-        pass
+        """
+        Retourne une ligne choisit par l'utilisateur
+        
+        Paramètre :
+            - no_ligne (int) : le numéro de la ligne à afficher
+        """
+        if no_ligne <= len(self._contenu):
+            return self._contenu[no_ligne]
+
+        else:
+            return str(no_ligne) + " " + "ne représente pas im élément du contenu"
 
 
 
