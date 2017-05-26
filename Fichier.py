@@ -42,8 +42,12 @@ class Fichier:
             - Message : « [un_nom] existe déjà. »
 
         """
-        self._nom = un_nom#pas fini
-
+        while True:
+            try:
+                self._nom = un_nom
+                break
+            except FileExistsError:
+                print(un_nom, " existe déjà")#à tester
 
     def get_contenu(self):
         """
@@ -54,7 +58,7 @@ class Fichier:
 
 
         """
-        pass
+        return self._contenu #incomplet
 
     def set_contenu(self, un_contenu):
         """
@@ -72,8 +76,13 @@ class Fichier:
 
             - Message : « Le fichier n’a pas été nommé ».
         """
-
-        pass
+        while True:
+            try:
+                self._contenu = un_contenu
+                break
+            except ValueError:
+                print(un_nom, "Le fichier n'a pas été nommée")# à tester
+        
 
     def lire(self):
         """
@@ -84,8 +93,8 @@ class Fichier:
 
 
         """
-
-        pass
+        for i in range(len(self._contenu)):
+            return readline(self._contenu[i])# à tester
 
     def écrire(self):
         """
@@ -117,7 +126,8 @@ class FichierTexte(Fichier):
 
         - Retour : (liste) Retourne une liste de lignes lues dans le fichier.
         """
-        pass
+        for i in range(len(self._contenu)):
+            return readline(self._contenu[i])# à tester
 
     def écrire(self):
         """
@@ -133,7 +143,7 @@ class FichierTexte(Fichier):
         pass
 
 
-class FichierBinaire(Fichier):
+class FichierBinaire(Fichier): # Je ne sais pas trop quoi faire.
     """
     Un fichier binaire.
 
