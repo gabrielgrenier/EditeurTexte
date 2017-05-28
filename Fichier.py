@@ -151,7 +151,9 @@ class FichierTexte(Fichier):
 
 class FichierBinaire(Fichier): # Je ne sais pas trop quoi faire.
     """
-    Un fichier binaire.
+    Un fichier binaire. En mode binaire, aﬃche les octets par ligne de 16 séparés en deux groupes.
+    Chaque octet est numéroté en additionnant le numéro de la ligne et le déplacement par rapport
+    au premier octet de la ligne.
 
 
     - Hérite de : Fichier
