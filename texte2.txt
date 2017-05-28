@@ -1,3 +1,4 @@
+salut
 un dexième texte
 pour tester
 les fonctions de l'éditeur
