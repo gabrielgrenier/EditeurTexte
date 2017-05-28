@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# Jean-Claude Gamarra
+#
+# TP4: Éditeur de texte - Class Texte et ses sous-Class
+
 class Fichier:
     """
     Un fichier
@@ -93,6 +97,7 @@ class Fichier:
 
 
         """
+        f = open(self._nom, "r")
         for i in range(len(self._contenu)):
             return readline(self._contenu[i])# à tester
 
@@ -126,6 +131,7 @@ class FichierTexte(Fichier):
 
         - Retour : (liste) Retourne une liste de lignes lues dans le fichier.
         """
+        f = open(self._nom, "r")
         for i in range(len(self._contenu)):
             return readline(self._contenu[i])# à tester
 
