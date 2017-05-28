@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Jean-Claude Gamarra
+# Jean-Claude Gamarra et Gabriel Braun - Grenier
 #
 # TP4: Éditeur de texte - Class Texte et ses sous-Class
 
@@ -46,12 +46,11 @@ class Fichier:
             - Message : « [un_nom] existe déjà. »
 
         """
-        while True:
-            try:
-                self._nom = un_nom
-                break
-            except FileExistsError:
-                print(un_nom, " existe déjà")#à tester
+        try:
+            self._nom = un_nom
+
+        except FileExistsError:
+            print(un_nom, " existe déjà")#à tester
 
     def get_contenu(self):
         """
@@ -80,12 +79,11 @@ class Fichier:
 
             - Message : « Le fichier n’a pas été nommé ».
         """
-        while True:
-            try:
-                self._contenu = un_contenu
-                break
-            except ValueError:
-                print(un_nom, "Le fichier n'a pas été nommée")# à tester
+        try:
+            self._contenu = un_contenu
+
+        except ValueError:
+            print(un_nom, "Le fichier n'a pas été nommée")# à tester
         
 
     def lire(self):
@@ -99,9 +97,9 @@ class Fichier:
         """
         f = open(self._nom, "r")
         for i in range(len(self._contenu)):
-            return readline(self._contenu[i])# à tester
+            return f.readline(self._contenu[i])
 
-    def écrire(self):
+    def écrire(self, un_contenu):
         """
         Méthode abstraite (non implémentée dans la super-classe).
         Écrit un nouveau contenu dans un fichier texte.
@@ -110,11 +108,10 @@ class Fichier:
         Paramètre :
 
             - un_contenu : (Liste) Méthode abstraite (non implémentée dans la super-classe).
-            Écrit un nouveau contenu dans un fichier texte.
-
-
+            Écrit un nouveau contenu dans un fichier texte
         """
-        pass
+        contenu = un_contenu
+        FichierTexte.écrire(self, contenu)
 
 
 class FichierTexte(Fichier):
@@ -133,9 +130,9 @@ class FichierTexte(Fichier):
         """
         f = open(self._nom, "r")
         for i in range(len(self._contenu)):
-            return readline(self._contenu[i])# à tester
+            return f.readline(self._contenu[i])
 
-    def écrire(self):
+    def écrire(self, un_contenu):
         """
         Écrit un nouveau contenu dans un fichier texte.
 
@@ -145,8 +142,13 @@ class FichierTexte(Fichier):
 
 
         """
+        f = open(self.get_nom(), "w")
 
-        pass
+        for i in range(len(un_contenu)):
+            f.writelines(un_contenu[i])
+
+        f.close()
+
 
 
 class FichierBinaire(Fichier): # Je ne sais pas trop quoi faire.

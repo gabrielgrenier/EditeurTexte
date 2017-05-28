@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#Auteur Gabriel Braun-Grenier
+#Auteur Gabriel Braun - Grenier
 #Date : 2017-05-20
 #Classe Éditeur, Tampon, TamponTexte et TamponBinaire
 
@@ -30,21 +30,24 @@ class Editeur():
         Affiche l’invite de commande ( :) et saisi une commande de l’utilisateur.
         Retour (liste de str) : Une liste de mots entrés par l’utilisateur 
         """
-        choix = input(">")
-        return choix
+        choix = input(":")
+        if choix == "":
+            print("ce n'est pas valide")
+
+        else:
+            return choix
 
     def exécute_commande(self, une_commande):
         """
         Valide et exécute une commande de l’utilisateur.
         
         Paramètres :
-            - commande (str) : la commande entrée par l’utilisateur
-            - paramètre (str) : le paramètre entré par l’utilisateur ou None s’il n’y en a pas
+            - une_commande (str) : la commande entrée par l’utilisateur
         
         Retour (bool) Faux si et seulement si c’était la dernière commande et que le programme doit se terminer.
         """
-        liste_mots = une_commande.split()
-        commande = liste_mots[0]
+        liste_mots = une_commande.split() #sépare la commande en liste de mot
+        commande = liste_mots[0] #la commande se trouve à la position 0
 
         if commande == "a": #commande pour afficher
             paramètre = liste_mots[-1]
@@ -54,13 +57,8 @@ class Editeur():
                 nombre_ligne = int(paramètre[1::])
                 contenu_str = ""
 
-                print("la commande :", liste_mots)  # Débug
-                print("le paramètre :", paramètre)  # Débug
-                print("le nombre de ligne à afficher:", nombre_ligne)  # Débug
-                print("Longeur de tempon courant:", len(self._tampon_courant._contenu)) #débug
-
                 if nombre_ligne < len(self._tampon_courant._contenu): #si il ne veut pas afficher toutes les lignes
-                    while compteur < nombre_ligne:
+                    while compteur <= nombre_ligne:
                         contenu_str = contenu_str + str(compteur) + " " + self._tampon_courant._contenu[compteur]
                         compteur = compteur + 1
 
@@ -76,83 +74,110 @@ class Editeur():
                 print("ce n'est pas un choix valide")
 
 
-        if commande == "l" and liste_mots[-1] != "l": #si la commande est l et que l'utilisateur entre un chemin
+        elif commande == "l" and liste_mots[-1] != "l": #si la commande est l et que l'utilisateur entre un chemin
             tampon_existant = False
             chemin = liste_mots[-1]
 
-            for i in range(len(self._tampons)):
-                if chemin == self._tampons[i]._fichier.get_nom():
-                    self._tampon_courant = self._tampons[i]
+            for i in range(len(self._tampons)): #pour la longeur de la liste de tampons,
+                if chemin == self._tampons[i]._fichier.get_nom(): #si le tempon est dans la liste
+                    self._tampon_courant = self._tampons[i] #ouvre le tempn
                     tampon_existant = True
                     break
 
-            if tampon_existant == False:
-                nouveau_tampon = Tampon(chemin)
+            if tampon_existant == False: #si le tempon n'a pas été ouvert
+                nouveau_tampon = Tampon(chemin) #créé un nouveau tempon
                 self._tampon_courant = nouveau_tampon
                 self._tampons.append(self._tampon_courant)
                 self._tampon_courant.ouvrir(chemin)
 
 
-
-        if commande == "b":#Binaire pas encore fait
+        elif commande == "b":#Binaire pas encore fait
             pass
 
-        if commande == "e": #rajouter des conditions comme quand il n'y a pas de chemin
-            chemin = liste_mots[-1]
-            self._tampon_courant.sauvegarder(chemin)
 
-        if commande == "i": #à refaire Selon le document
-            if len(self._tampons) == 0: #refaire
+        elif commande == "e":
+            chemin = liste_mots[-1] #le chemin se trouve apres la commande
+            self._tampon_courant.sauvegarder(chemin) #ouvre la fontion d'enregistrement
+
+
+        elif commande == "i": #JE DOIS RAJOUTER QUE QUAND IL N'Y A PAS DE FICHIER, CRÉÉ UN FICHIER SANS NOM
+            if len(self._tampons) == 0:#si l'utilisateur n'a pas ouvert de fichier dans le tampon
+                print("Vous devez charger un fichier dans le programme avant de pouvoir le modifier.")
+
+            else:#si l'utilisateur a chargé un fichier dans le tampon
+                no_ligne = liste_mots[-1]
+
+                if no_ligne[1::].isdigit() == True:
+                    ajout = input(">")
+
+                    self._tampon_courant.inserer(ajout, int(no_ligne[1::]))
+
+                else:
+                    print("veuillez entrer un paramètre numérique ")
+
+        elif commande == "r":
+            if len(self._tampons) == 0:# si l'utilisateur n'a pas ouvert de fichier dans la mémoire tampon
                 print("Vous devez charger un fichier dans le programme avant de pouvoir le modifier.")
 
             else:
-                print("À quelle position voulez-vous faire votre ajout?")
-                position = input(":")
+                no_ligne = liste_mots[-1] #la ligne à remplacer
 
-                if position.isdigit() == False:
-                    print("Veuillez entrer un paramètre numérique.")
+                if no_ligne[1::].isdigit() == True:
+                    ajout = input(">") #le contenu que l'utilisateur veut rajouter
 
+                    self._tampon_courant._modifié = True
+                    self._tampon_courant._contenu[int(no_ligne[1::])] = ajout + "\n"
 
                 else:
-                    position = int(position)
-                    print("Veuillez entrer l'ajout")
-                    ajout = input(":")
+                    print("veuillez entrer un paramètre numérique ")
 
-                    self._tampon_courant.inserer(ajout, position)
 
-        if commande == "s":
-            paramètre = liste_mots[-1]
 
-            if paramètre[1::].isdigit() == True:
-                no_ligne = paramètre[1::]
-                no_ligne = int(no_ligne)
-                self._tampon_courant.supprimer(no_ligne)
+        elif commande == "s":
+            no_ligne = liste_mots[-1]
+
+            if no_ligne[1::].isdigit() == True:
+                no_ligne = int(no_ligne[1::])#le nunéro de la ligne à supprimer
+                self._tampon_courant.supprimer(no_ligne)#supprime la ligne
 
 
             else:
-                print("Votre choix n'est pas valide.")
+                print("Veuillez entrer un paramètre numérique")#si l'utilisateur n'a pas entré un valeur int
 
-        if commande == "t" and liste_mots[-1] == "t":
-            if len(self._tampons) > 0:
-                for i in range(len(self._tampons)):
-                    print(i, self._tampons[i]._fichier.get_nom())
+        elif commande == "t" and liste_mots[-1] == "t":
+            if len(self._tampons) > 0: #si l'utilisateur a au moin chargé un fichier dans la mémoire tampon
+                for i in range(len(self._tampons)):#pour chaque fichier ouvert
+                    print(i, self._tampons[i]._fichier.get_nom())#affiche le nom du fichier
 
             else:
                 print("Vous n'avez pas chargé de fichier dans la mémoire tampon.")
 
-        if commande == "z":
-            paramètre = int(liste_mots[-1])
-            print(self._tampon_courant.get_ligne(paramètre))
-
-        if commande == "q":
+        elif commande == "q":
             if self._tampon_courant.est_modifié() == True:
                 print("Vous devez sauvegarder votre fichier avant de quitter.")
 
             else:
                 quit()
 
-        if commande == "Q":
+        elif commande == "Q":
             quit()
+
+        elif commande == "/help":
+            print("--------------------------------------------------------------------  AIDE  ------------------------------------------------------------------------------")
+            print("|    l NomFichier.txt = Lecture et ouverture du fichier dans l'éditeur.                                                                                   |")
+            print("|    a n[i] = Affichage des lignes 0 à i, si la commande n'a pas de paramètre, affiche le fichier au complet.                                             |")
+            print("|    e NomFichier.txt = Enregistrement de votre fichier sous un nouveau nom, la commande n'a pas de paramètre, le fichier est saugarder sous le même nom. |")
+            print("|    i n[i] = Insérer du contenu à la ligne i, ne la remplace pas.                                                                                        |")
+            print("|    r n[i] = Remplace la ligne i par du nouveau contenu.                                                                                                 |")
+            print("|    s n[i] = Supprimer la ligne i.                                                                                                                       |")
+            print("|    t = affiche la liste des fichiers ouvert dans la mémoire tampon.                                                                                     |")
+            print("|    q = Quitter d'une manière sécuritaire, le programme vous rapelle de sauvegarder votre fichier avant de quitter.                                      |")
+            print("|    Q = Quitter sans sauvegarder vos modifications.                                                                                                      |")
+            print("-----------------------------------------------------------------------------------------------------------------------------------------------------------")
+
+        else:
+            print("Ce n'est pas un choix valide.")
+
 
 class Tampon():
     """
@@ -228,12 +253,22 @@ class Tampon():
             un_nom_fichier (str) : le chemin relatif du fichier dans lequel sauvegarder le contenu du tampon.
         """
         self._modifié = False
-        f = open(un_nom_fichier, "w")
 
-        for i in range(len(self._contenu)):
-            f.writelines(self._contenu[i])
+        if un_nom_fichier == "e": #si l'utilisateur n'a pas rentré de chemin (e = seulement la commande sans chemin nis non)
+            self._fichier.écrire(self._contenu)
 
-        f.close()
+        else:#si l'utilisateur à entrer un nom ou un chemin
+            try:
+                f = open(un_nom_fichier, "w")
+
+                for i in range(len(self._contenu)):#Écrit tout le contenu en mémoire dans le fichier
+                    f.writelines(self._contenu[i])
+
+                f.close()#ferme le fichier
+
+            except FileNotFoundError:#si le chemin n'est pas valide
+                print("Le nom ou le chemin n'est pas valide.")
+
 
 
     def inserer(self, un_ajout, position):
@@ -251,6 +286,7 @@ class Tampon():
         """
         self._modifié = True
 
+
         if position < len(self._contenu):
             première_moitié = self._contenu[0:position]
             deuxième_moitié = self._contenu[position::]
@@ -259,7 +295,7 @@ class Tampon():
             self._contenu = première_moitié + deuxième_moitié
 
         else:
-            self._contenu.append("\n" + str(len(self._contenu)) + " " +un_ajout + "\n")
+            self._contenu.append(un_ajout + "\n")
 
     def supprimer(self, position):
         """
@@ -273,7 +309,7 @@ class Tampon():
          Message : «position ne représente pas un élément du contenu»
         """
         self._modifié = True
-        self._contenu.pop(position) #Faire le try / except
+        self._contenu.pop(position)
 
     def est_modifié(self):
         """
@@ -286,13 +322,17 @@ class Tampon():
 
 
 class TamponTexte(Tampon):
+    """
+    La classe TamponTexte.
+    Héritié de Tampon.
+    """
     def __str__(self):
         """
         Retourne le contenu complet du tampon
         """
         contenu = ""
-        for i in range(len(self._contenu)):
-            contenu = contenu + str(i) + " " + self._contenu[i]
+        for i in range(len(self._contenu)):#pour la longeur du contenu
+            contenu = contenu + str(i) + " " + self._contenu[i]#écrit chaque ligne dans un str
 
         return contenu
 
@@ -305,13 +345,9 @@ class TamponTexte(Tampon):
         """
         try:
             f = open(un_nom_fichier, "r")
-            print("Ouverture de", un_nom_fichier)
 
             for line in f.readlines():  # Boucle qui rajoute toute les lignes du fichier dans le contenu du tampon courant
                 self._contenu.append(line)
-
-            print("la longeur du tempon courant :", len(self._contenu))  # débug
-            print(self._contenu)  #débug
 
             return self._contenu
 
@@ -331,11 +367,63 @@ class TamponTexte(Tampon):
         else:
             return str(no_ligne) + " " + "ne représente pas im élément du contenu"
 
+class TamponBinaire(Tampon):
+    """
+    Classe TamponBinaire.
+    Héritié de Tampon.
+    """
 
+    def __str__(self):
+        """
+        Le contenu sous la forme d’une chaîne de caractères.
+        Les octets doivent être représentés sous forme hexadécimale,
+        par groupes de 8, 2 groupes par ligne. Les lignes doivent être
+        numérotées en hexadécimal selon le numéro du premier octet
+        de la ligne. Si un paramètre position est donné, les 16 octets à
+        partir de position doivent être affichés.
+        """
 
+    def ouvrir(self, un_nom_fichier):
+        """
+        Charge le contenu d'un fichier binaire dans le tampon.
+        
+        Paramètre :
+            - un_nom_fichier (str) : le chemin relatif du fichier à lire
+        """
 
+    def get_ligne(self, no_ligne):
+        """
+        Retourne une ligne (16 octets) du tampon dans une forme affichable.
+        
+        Paramètre :
+            - no_ligne (int) le numéro du premier élément à aficher
+            
+        Retourne une ligne du contenu (16 octets) sous la forme d’une chaîne de caractères.
+        
+        Assertion :
+            - Le numéro de la ligne ne correspond pas a un élément du tampon = «no_ligne ne représente pas un élément du contenu»
+        """
 
+    def inséré(self, un_ajout, position):
+        """
+        Insère un élément dans le tampon, soit un octet.
+        
+        Paramètres :
+            - un_ajout (str) : la représentation hexadécimale d’un octet.
+            - position (int) : la position où le nouvel octet doit être inséré
+            
+        Assertions:
+            - Si un_ajout ne peut pas être convertit en octet =  « [un_ajout] ne peut être converti en octet ».
+            - Si la position dépasse la taille du Tampon = « la position dépasse la taille du tampon »
+        """
+"""
 éditeur = Editeur()
+
+print("Merci d'utiliser le meilleure éditeur de texte !")
+print("Si vous avez besoin d'aide, veuillez entrer /help.")
+
 while True:
     choix = éditeur.invite()
-    éditeur.exécute_commande(choix)
+    if choix != None:
+        éditeur.exécute_commande(choix)
+"""
