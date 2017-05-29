@@ -178,11 +178,11 @@ class Editeur():
         elif commande == "/help":
             print("--------------------------------------------------------------------  AIDE  ------------------------------------------------------------------------------")
             print("|    l NomFichier.txt = Lecture et ouverture du fichier dans l'éditeur.                                                                                   |")
-            print("|    a n[i] = Affichage des lignes 0 à i, si la commande n'a pas de paramètre, affiche le fichier au complet.                                             |")
+            print("|    a n = Affichage des lignes 0 à n, si la commande n'a pas de paramètre, affiche le fichier au complet.                                             |")
             print("|    e NomFichier.txt = Enregistrement de votre fichier sous un nouveau nom, la commande n'a pas de paramètre, le fichier est saugarder sous le même nom. |")
-            print("|    i n[i] = Insérer du contenu à la ligne i, ne la remplace pas.                                                                                        |")
-            print("|    r n[i] = Remplace la ligne i par du nouveau contenu.                                                                                                 |")
-            print("|    s n[i] = Supprimer la ligne i.                                                                                                                       |")
+            print("|    i n = Insérer du contenu à la ligne n, ne la remplace pas.                                                                                        |")
+            print("|    r n = Remplace la ligne n par du nouveau contenu.                                                                                                 |")
+            print("|    s n = Supprimer la ligne n.                                                                                                                       |")
             print("|    t = affiche la liste des fichiers ouvert dans la mémoire tampon.                                                                                     |")
             print("|    q = Quitter d'une manière sécuritaire, le programme vous rapelle de sauvegarder votre fichier avant de quitter.                                      |")
             print("|    Q = Quitter sans sauvegarder vos modifications.                                                                                                      |")
@@ -430,14 +430,3 @@ class TamponBinaire(Tampon):
             - Si un_ajout ne peut pas être convertit en octet =  « [un_ajout] ne peut être converti en octet ».
             - Si la position dépasse la taille du Tampon = « la position dépasse la taille du tampon »
         """
-
-éditeur = Editeur()
-
-print("Merci d'utiliser le meilleure éditeur de texte !")
-print("Si vous avez besoin d'aide, veuillez entrer /help.")
-
-while True:
-    choix = éditeur.invite()
-    if choix != None:
-        éditeur.exécute_commande(choix)
-
